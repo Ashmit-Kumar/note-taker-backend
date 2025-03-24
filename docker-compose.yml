@@ -1,16 +1,35 @@
+version: '3.7'
+
 services:
-  app:
-    build:
-      context: .  # Use the current directory for the build context
-      dockerfile: Dockerfile  # Specify the Dockerfile (optional, as it's the default name)
-    image: note-backend:${TAG}
+  frontend:
+    image: note-frontend:${IMAGE_TAG}  # Use pre-built frontend image with dynamic tag
     ports:
-      - "5000:5000"  # Map the container's port 5000 to the host's port 5000
+      - "3000:3000"  # Expose frontend port
     environment:
-      - NODE_ENV=production  # Set the environment variable inside the container
-      - DB_NAME=${dbName}  # Use the environment variable for db name
+      - FRONTEND_API_URL=${VITE_API_URL}  # Assuming you are passing a port for the frontend
+    depends_on:
+      - backend
+
+  backend:
+    image: note-backend:${IMAGE_TAG}  # Use pre-built backend image with dynamic tag
+    ports:
+      - "${PORT}:${PORT}"  # Expose the backend port dynamically using the environment variable
+    environment:
+      - NODE_ENV=production
+      - PORT=${PORT}  # Use the secret file for PORT
+      - dbName=${dbName}  # Use the secret file for dbName
       - MONGO_URI=${MONGO_URI}
-      - PORT = ${PORT}
-    volumes:
-      - .:/app  # Mount the current directory to the /app directory in the container (optional, for hot reloading during development)
-    restart: unless-stopped  # Ensure the container restarts automatically if it crashes
+    networks:
+      - app-network
+
+secrets:
+  port_secret:
+    external: true  # The secret for PORT
+  dbname_secret:
+    external: true  # The secret for dbName
+  mongo_uri_secret:
+    external: true  # The secret for MONGO_URI
+
+networks:
+  app-network:
+    driver: bridge  # Use bridge network for local communication
