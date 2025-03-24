@@ -1,0 +1,16 @@
+services:
+  app:
+    build:
+      context: .  # Use the current directory for the build context
+      dockerfile: Dockerfile  # Specify the Dockerfile (optional, as it's the default name)
+    image: note-backend:${TAG}
+    ports:
+      - "5000:5000"  # Map the container's port 5000 to the host's port 5000
+    environment:
+      - NODE_ENV=production  # Set the environment variable inside the container
+      - DB_NAME=${dbName}  # Use the environment variable for db name
+      - MONGO_URI=${MONGO_URI}
+      - PORT = ${PORT}
+    volumes:
+      - .:/app  # Mount the current directory to the /app directory in the container (optional, for hot reloading during development)
+    restart: unless-stopped  # Ensure the container restarts automatically if it crashes
