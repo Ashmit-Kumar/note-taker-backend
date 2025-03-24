@@ -4,12 +4,12 @@ services:
       context: .  # Build from the current directory (which should contain the Dockerfile)
     image: note-backend:latest  # Tag for the image that will be built
     ports:
-      - "${PORT}:${PORT}"  # Expose the port dynamically from the environment variable
+      - "${PORT_SECRET}:${PORT_SECRET}"  # Expose the port dynamically from the environment variable
     environment:
       - NODE_ENV=production  # Set the NODE_ENV variable to 'production'
-      - PORT=${PORT}  # Pass the PORT environment variable
-      - dbName=${dbName}  # Pass the dbName environment variable
-      - MONGO_URI=${MONGO_URI}  # Pass the MONGO_URI environment variable
+      - PORT=${PORT_SECRET}  # Pass the PORT environment variable
+      - dbName=${dbName_SECRET}  # Pass the dbName environment variable
+      - MONGO_URI=${MONGO_URI_SECRET}  # Pass the MONGO_URI environment variable
     volumes:
       - .:/app  # Mount the current directory to /app inside the container for live code editing (optional)
     networks:
