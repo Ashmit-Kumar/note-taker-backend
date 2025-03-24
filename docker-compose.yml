@@ -1,34 +1,19 @@
-version: '3.7'
-
 services:
-  frontend:
-    image: note-frontend:${IMAGE_TAG}  # Use pre-built frontend image with dynamic tag
+  app:
+    build:
+      context: .  # Build from the current directory (which should contain the Dockerfile)
+    image: note-backend:latest  # Tag for the image that will be built
     ports:
-      - "3000:3000"  # Expose frontend port
+      - "${PORT}:${PORT}"  # Expose the port dynamically from the environment variable
     environment:
-      - FRONTEND_API_URL=${VITE_API_URL}  # Assuming you are passing a port for the frontend
-    depends_on:
-      - backend
-
-  backend:
-    image: note-backend:${IMAGE_TAG}  # Use pre-built backend image with dynamic tag
-    ports:
-      - "${PORT}:${PORT}"  # Expose the backend port dynamically using the environment variable
-    environment:
-      - NODE_ENV=production
-      - PORT=${PORT}  # Use the secret file for PORT
-      - dbName=${dbName}  # Use the secret file for dbName
-      - MONGO_URI=${MONGO_URI}
+      - NODE_ENV=production  # Set the NODE_ENV variable to 'production'
+      - PORT=${PORT}  # Pass the PORT environment variable
+      - dbName=${dbName}  # Pass the dbName environment variable
+      - MONGO_URI=${MONGO_URI}  # Pass the MONGO_URI environment variable
+    volumes:
+      - .:/app  # Mount the current directory to /app inside the container for live code editing (optional)
     networks:
       - app-network
-
-secrets:
-  port_secret:
-    external: true  # The secret for PORT
-  dbname_secret:
-    external: true  # The secret for dbName
-  mongo_uri_secret:
-    external: true  # The secret for MONGO_URI
 
 networks:
   app-network:
