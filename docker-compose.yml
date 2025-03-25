@@ -1,5 +1,5 @@
 services:
-  app:
+  backend:
     build:
       context: .  # Build from the current directory (which should contain the Dockerfile)
     image: note-backend  # Tag for the image that will be built
